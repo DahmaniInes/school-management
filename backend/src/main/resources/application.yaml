@@ -1,3 +1,29 @@
 spring:
   application:
-    name: backend
+    name: school-management-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3336/school_db?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password:           # ← laisse vide si tu n’as pas de mot de passe, ou mets ton mot de passe MySQL
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+
+jwt:
+  secret: mySuperSecretJwtKeyThatIsVeryLongAndSecure12345678901234567890
+  expiration-ms: 86400000
+
+logging:
+  level:
+    com.school.backend: DEBUG
