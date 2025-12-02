@@ -1,21 +1,24 @@
+// src/main/java/com/school/backend/Controller/AuthController.java
 package com.school.backend.Controller;
 
-import com.school.backend.DTO.AuthResponse;
-import com.school.backend.DTO.LoginRequest;
-import com.school.backend.DTO.RegisterRequest;
+import com.school.backend.DTO.*;
 import com.school.backend.Service.AuthService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private final AuthService authService;
+
+    // CONSTRUCTEUR EXPLICITE – PLUS DE LOMBOK = PLUS DE PROBLÈME
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
