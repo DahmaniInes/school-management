@@ -16,4 +16,26 @@ public class Student {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Level level;
+
+    public Long getId() {
+        return id;
+    }
+
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
 }
