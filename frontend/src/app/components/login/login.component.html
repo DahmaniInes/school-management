@@ -1,1 +1,83 @@
-<p>login works!</p>
+<div class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8 space-y-6">
+      
+      <!-- Header -->
+      <div class="text-center">
+        <svg class="mx-auto h-12 w-auto text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v3h8z" />
+        </svg>
+        <h2 class="mt-4 text-3xl font-extrabold text-gray-900">
+          Connexion Admin
+        </h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Gestion Scolaire (Spring Boot + Angular)
+        </p>
+      </div>
+  
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm" role="alert">
+        {{ errorMessage }}
+      </div>
+  
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Username Field -->
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+          <div class="mt-1">
+            <input
+              id="username"
+              name="username"
+              type="text"
+              formControlName="username"
+              required
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['username'].invalid && f['username'].touched}"
+            >
+            <div *ngIf="f['username'].invalid && f['username'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['username'].errors?.['required']">Le nom d'utilisateur est requis.</div>
+              <div *ngIf="f['username'].errors?.['minlength']">Minimum 3 caractères.</div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+          <div class="mt-1">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              formControlName="password"
+              required
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['password'].invalid && f['password'].touched}"
+            >
+            <div *ngIf="f['password'].invalid && f['password'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['password'].errors?.['required']">Le mot de passe est requis.</div>
+              <div *ngIf="f['password'].errors?.['minlength']">Minimum 6 caractères.</div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Submit Button -->
+        <div>
+          <button
+            type="submit"
+            [disabled]="loginForm.invalid || loading"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out disabled:opacity-50"
+          >
+            <span *ngIf="!loading">Se connecter</span>
+            <span *ngIf="loading" class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Connexion...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
