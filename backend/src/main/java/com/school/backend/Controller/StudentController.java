@@ -7,12 +7,14 @@ import jakarta.validation.Valid;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/students")
 @CrossOrigin(origins = "http://localhost:4200")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class StudentController {
 
     private final StudentService studentService;
