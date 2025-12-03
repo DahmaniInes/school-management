@@ -1,0 +1,23 @@
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Styles globaux conservés par Material, mais avec des ajouts Tailwind */
+html, body { 
+  height: 100%; 
+}
+
+body { 
+  margin: 0; 
+  /* Conserver Roboto pour l'intégration Material */
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  background-color: #f3f4f6; /* Tailwind gray-100 */
+}
+
+/* Base structure for Angular app */
+app-root {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
