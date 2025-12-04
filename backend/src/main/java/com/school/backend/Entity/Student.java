@@ -17,6 +17,10 @@ public class Student {
     @Column(nullable = false)
     private Level level;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

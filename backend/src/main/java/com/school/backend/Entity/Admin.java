@@ -41,6 +41,10 @@ public class Admin implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override public String getPassword() { return password; }
     @Override public String getUsername() { return username; }
     @Override public boolean isAccountNonExpired() { return true; }
