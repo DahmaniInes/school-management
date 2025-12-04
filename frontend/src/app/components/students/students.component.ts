@@ -25,13 +25,13 @@ export class StudentsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  // État de la page
+  // Page state
   currentPage = signal(0);
   pageSize = signal(5);
   searchQuery = signal('');
   selectedLevelFilter = signal<Level | null>(null);
 
-  // Modale
+  // Modal
   isModalOpen = signal(false);
   selectedStudentToEdit = signal<StudentResponse | null>(null);
 
@@ -41,7 +41,7 @@ export class StudentsComponent implements OnInit {
   fileImportError = signal<string | null>(null);
 
   constructor() {
-    // Met à jour l'URL quand l'état change (page, recherche, filtre)
+    // Update URL when state changes (page, search, filter)
     effect(() => {
       this.router.navigate([], {
         relativeTo: this.route,
@@ -58,7 +58,7 @@ export class StudentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Lit les query params au chargement (F5, lien direct, etc.)
+    // Read query params on load (F5, direct link, etc.)
     this.route.queryParams.subscribe(params => {
       this.currentPage.set(parseInt(params['page'] ?? '0', 10));
       this.pageSize.set(parseInt(params['size'] ?? '5', 10));
@@ -66,7 +66,7 @@ export class StudentsComponent implements OnInit {
       this.selectedLevelFilter.set((params['level'] as Level) ?? null);
     });
 
-    // Charge les données une fois l'état restauré
+    // Load data once state is restored
     this.loadStudents();
   }
 
@@ -78,10 +78,9 @@ export class StudentsComponent implements OnInit {
       this.selectedLevelFilter()
     ).subscribe({
       next: (data) => {
-        // Important : on met à jour le signal pour que le template réagisse
         this.studentService.studentsPage.set(data);
       },
-      error: (err) => console.error('Erreur chargement étudiants:', err)
+      error: (err) => console.error('Error loading students:', err)
     });
   }
 
@@ -97,7 +96,7 @@ export class StudentsComponent implements OnInit {
     return Array.from({ length: pageData.totalPages }, (_, i) => i);
   }
 
-  // === FORMULAIRE ===
+  // === FORM ===
   openCreateModal(): void {
     this.selectedStudentToEdit.set(null);
     this.isModalOpen.set(true);
@@ -115,16 +114,15 @@ export class StudentsComponent implements OnInit {
 
   onFormSubmitted(): void {
     this.closeModal();
-    this.currentPage.set(0); // retour page 1 après ajout/modif
+    this.currentPage.set(0); // Return to first page after add/edit
     this.loadStudents();
   }
 
-  // === SUPPRESSION (CORRIGÉE) ===
+  // === DELETE (IMPROVED) ===
   deleteStudent(id: number, username: string): void {
-    if (confirm(`Supprimer l'étudiant "${username}" ?`)) {
+    if (confirm(`Delete student "${username}"? This action cannot be undone.`)) {
       this.studentService.delete(id).subscribe({
         next: () => {
-          // Si on supprime le dernier étudiant de la page → on recule d'une page
           const currentContent = this.studentService.students();
           if (currentContent.length === 1 && this.currentPage() > 0) {
             this.currentPage.set(this.currentPage() - 1);
@@ -132,14 +130,14 @@ export class StudentsComponent implements OnInit {
           this.loadStudents();
         },
         error: (err) => {
-          console.error('Erreur suppression:', err);
-          alert('Impossible de supprimer cet étudiant.');
+          console.error('Delete error:', err);
+          alert('Failed to delete this student. Please try again.');
         }
       });
     }
   }
 
-  // === FILTRES ===
+  // === FILTERS ===
   applyFilters(): void {
     this.currentPage.set(0);
     this.loadStudents();
@@ -165,18 +163,20 @@ export class StudentsComponent implements OnInit {
 
   importCsv(): void {
     if (!this.selectedFile) {
-      this.fileImportError.set('Veuillez sélectionner un fichier.');
+      this.fileImportError.set('Please select a file to import.');
       return;
     }
-    this.fileImportMessage.set('Import en cours...');
+    this.fileImportMessage.set('Importing students...');
     this.studentService.importCsv(this.selectedFile).subscribe({
       next: () => {
-        this.fileImportMessage.set('Import réussi !');
+        this.fileImportMessage.set('Students imported successfully!');
         this.selectedFile = null;
         this.loadStudents();
-        setTimeout(() => this.fileImportMessage.set(null), 3000);
+        setTimeout(() => this.fileImportMessage.set(null), 4000);
       },
-      error: (err) => this.fileImportError.set('Échec import: ' + err.message)
+      error: (err) => {
+        this.fileImportError.set('Import failed: ' + (err.error?.message || err.message || 'Unknown error'));
+      }
     });
   }
 
@@ -187,8 +187,13 @@ export class StudentsComponent implements OnInit {
         const a = document.createElement('a');
         a.href = url;
         a.download = 'students.csv';
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+      },
+      error: () => {
+        alert('Failed to export students. Please try again.');
       }
     });
   }

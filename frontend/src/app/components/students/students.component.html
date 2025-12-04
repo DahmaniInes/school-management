@@ -1,20 +1,33 @@
 <!-- Modern Admin Header -->
-<header class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm shadow-md">
+<header class="bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <h1 class="text-xl font-extrabold leading-tight text-gray-900 tracking-wide flex items-center">
-          <svg class="h-6 w-6 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20h-5v-2a3 3 0 015.356-1.857M9 20H4v-2a3 3 0 015-2.485" /></svg>
-          Student Manager
-        </h1>
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-gray-900">Student Manager</h1>
+            <p class="text-xs text-gray-500">Management Dashboard</p>
+          </div>
+        </div>
 
-        <!-- User/Admin Profile (Simulated) & Logout Button -->
         <div class="flex items-center space-x-4">
-            <span class="text-sm font-medium text-gray-700 hidden sm:inline">Admin User</span>
+            <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-200">
+              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                AD
+              </div>
+              <span class="text-sm font-medium text-gray-700">Admin User</span>
+            </div>
             <button
                 (click)="authService.logout()"
-                class="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150"
+                class="flex items-center px-4 py-2 text-sm font-medium rounded-xl text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors"
             >
-                <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
                 Logout
             </button>
         </div>
@@ -22,16 +35,16 @@
     </div>
 </header>
 
-<main class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-    <div class="px-4 sm:px-0">
+<main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-0 space-y-6">
 
-        <!-- Control Bar: Search, Filter, Add -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Control Bar -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
             
-            <!-- Search Card -->
-            <div class="lg:col-span-2 bg-white shadow-xl rounded-xl p-5 border border-gray-100">
-                <label for="search" class="block text-sm font-semibold text-gray-800 mb-2">Search by Name</label>
-                <div class="flex rounded-lg shadow-md overflow-hidden">
+            <!-- Search -->
+            <div class="lg:col-span-2 bg-white rounded-2xl p-4 border border-gray-200">
+                <label for="search" class="block text-xs font-semibold text-gray-700 mb-2">Search Students</label>
+                <div class="flex rounded-xl overflow-hidden border border-gray-200">
                     <input 
                         type="text" 
                         id="search"
@@ -39,33 +52,35 @@
                         [(ngModel)]="searchQuery"
                         (keyup.enter)="applyFilters()"
                         placeholder="Search by name or ID..."
-                        class="flex-1 block w-full border-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm p-3"
+                        class="flex-1 block w-full border-0 focus:outline-none focus:ring-0 text-sm px-3 py-2 bg-gray-50"
                     >
                     <button 
                         (click)="clearSearch()"
-                        class="px-4 py-2 border-l border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 transition duration-150"
-                        title="Clear Search"
+                        class="px-3 border-l border-gray-200 bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                        title="Clear"
                     >
-                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                     <button 
                         (click)="applyFilters()"
-                        class="px-5 py-2 bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition duration-150 flex items-center"
+                        class="px-4 bg-indigo-500 text-white font-medium hover:bg-indigo-600 transition-colors text-sm"
                     >
                         Search
                     </button>
                 </div>
             </div>
 
-            <!-- Level Filter Card -->
-            <div class="bg-white shadow-xl rounded-xl p-5 border border-gray-100">
-                <label for="level-filter" class="block text-sm font-semibold text-gray-800 mb-2">Filter by Level</label>
-                <div class="flex rounded-lg shadow-md overflow-hidden">
+            <!-- Level Filter -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-200">
+                <label for="level-filter" class="block text-xs font-semibold text-gray-700 mb-2">Filter by Level</label>
+                <div class="flex rounded-xl overflow-hidden border border-gray-200">
                     <select 
                         id="level-filter" 
                         [(ngModel)]="selectedLevelFilter"
                         (change)="applyFilters()"
-                        class="flex-1 block w-full border-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm p-3 appearance-none bg-white"
+                        class="flex-1 block w-full border-0 focus:outline-none focus:ring-0 text-sm px-3 py-2 bg-gray-50 appearance-none"
                     >
                         <option [ngValue]="null">All Levels</option>
                         <option *ngFor="let level of studentService.levels" [ngValue]="level">{{ level }}</option>
@@ -73,200 +88,230 @@
                     <button 
                         *ngIf="selectedLevelFilter()"
                         (click)="clearLevelFilter()"
-                        class="px-4 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 transition duration-150"
-                        title="Clear Filter"
+                        class="px-3 bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors border-l border-gray-200"
+                        title="Clear"
                     >
-                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Add Student Button Card -->
-            <div class="self-stretch">
+            <!-- Add Button -->
+            <div>
                 <button 
                     (click)="openCreateModal()"
-                    class="w-full h-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-xl text-lg font-semibold text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-200 transform hover:scale-[1.01]"
+                    class="w-full h-full flex justify-center items-center py-3 px-4 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 transition-all border border-emerald-400/20"
                 >
-                    <svg class="h-6 w-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
                     Add Student
                 </button>
             </div>
         </div>
 
-        <!-- File Tools Section -->
-        <div class="bg-white shadow-xl rounded-xl p-6 mb-8 border border-gray-100">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">File Tools (Import / Export)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
+        <!-- File Tools -->
+        <div class="bg-white rounded-2xl p-5 border border-gray-200">
+            <h3 class="text-sm font-bold text-gray-900 mb-4">Import / Export</h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                 
-                <!-- Export CSV -->
+                <!-- Export -->
                 <div class="md:col-span-2">
                     <button 
                         (click)="exportCsv()"
-                        class="w-full flex justify-center items-center py-2.5 px-4 border border-blue-600 rounded-lg shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-blue-50 transition duration-150"
+                        class="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
                     >
-                        <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 12l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        Export to CSV
+                        <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 12l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Export CSV
                     </button>
                 </div>
 
-                <!-- Import CSV -->
+                <!-- Import -->
                 <div class="md:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Import Student CSV File</label>
-                    <div class="flex items-center space-x-3">
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5"></label>
+                    <div class="flex items-center space-x-2">
+                        <!-- Input file caché -->
                         <input 
                             type="file" 
+                            #fileInput
                             (change)="onFileSelected($event)" 
                             accept=".csv"
-                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                            class="hidden"
+                            id="csvFileInput"
                         >
+                        
+                        <!-- Bouton personnalisé -->
+                        <button
+                            type="button"
+                            (click)="fileInput.click()"
+                            class="flex-1 flex items-center justify-center px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+                        >
+                            <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <span *ngIf="!selectedFile">Choose CSV File</span>
+                            <span *ngIf="selectedFile" class="font-medium text-indigo-600">{{ selectedFile.name }}</span>
+                        </button>
+                        
                         <button 
                             (click)="importCsv()"
                             [disabled]="!selectedFile"
-                            class="flex-shrink-0 flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white transition duration-150"
+                            class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-medium text-white transition-colors"
                             [ngClass]="{
-                                'bg-indigo-600 hover:bg-indigo-700': selectedFile,
-                                'bg-gray-400 cursor-not-allowed': !selectedFile
+                                'bg-indigo-500 hover:bg-indigo-600': selectedFile,
+                                'bg-gray-300 cursor-not-allowed': !selectedFile
                             }"
                         >
                             Import
                         </button>
                     </div>
-                    <div *ngIf="fileImportMessage()" class="mt-2 text-sm text-green-600 font-medium">{{ fileImportMessage() }}</div>
-                    <div *ngIf="fileImportError()" class="mt-2 text-sm text-red-600 font-medium">{{ fileImportError() }}</div>
+                    <div *ngIf="fileImportMessage()" class="mt-1.5 text-xs text-emerald-600 font-medium">{{ fileImportMessage() }}</div>
+                    <div *ngIf="fileImportError()" class="mt-1.5 text-xs text-red-600 font-medium">{{ fileImportError() }}</div>
                 </div>
+
             </div>
         </div>
 
         <!-- Students Table -->
-        <div class="flex flex-col">
-            <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                    <div class="shadow-xl overflow-hidden border border-gray-200 sm:rounded-xl">
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                ID
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Username
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Level
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
                         
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                        ID
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                        Username
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                        Level
-                                    </th>
-                                    <th scope="col" class="relative px-6 py-3">
-                                        <span class="sr-only">Actions</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-100">
-                                
-                                <tr *ngFor="let student of studentService.students()" class="hover:bg-indigo-50/50 transition duration-100">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                        {{ student.id }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ student.username }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span 
-                                            class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-sm"
-                                            [ngClass]="{
-                                                'bg-blue-100 text-blue-800': student.level === 'L1' || student.level === 'L2',
-                                                'bg-green-100 text-green-800': student.level === 'L3',
-                                                'bg-yellow-100 text-yellow-800': student.level === 'M1',
-                                                'bg-red-100 text-red-800': student.level === 'M2'
-                                            }"
-                                        >
-                                            {{ student.level }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                                        <button 
-                                            (click)="openEditModal(student)"
-                                            class="text-indigo-600 hover:text-indigo-800 transition duration-150 font-medium"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button 
-                                            (click)="deleteStudent(student.id, student.username)"
-                                            class="text-red-600 hover:text-red-800 transition duration-150 font-medium"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
+                        <tr *ngFor="let student of studentService.students()" class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ student.id }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                {{ student.username }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span 
+                                    class="px-3 py-1 inline-flex text-xs font-medium rounded-lg"
+                                    [ngClass]="{
+                                        'bg-blue-50 text-blue-700 border border-blue-200': student.level === 'L1' || student.level === 'L2',
+                                        'bg-emerald-50 text-emerald-700 border border-emerald-200': student.level === 'L3',
+                                        'bg-amber-50 text-amber-700 border border-amber-200': student.level === 'M1',
+                                        'bg-rose-50 text-rose-700 border border-rose-200': student.level === 'M2'
+                                    }"
+                                >
+                                    {{ student.level }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex justify-end items-center space-x-3">
+                                    <button 
+                                        (click)="openEditModal(student)"
+                                        class="text-indigo-600 hover:text-indigo-700 transition-colors p-1"
+                                        title="Edit"
+                                    >
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <button 
+                                        (click)="deleteStudent(student.id, student.username)"
+                                        class="text-red-600 hover:text-red-700 transition-colors p-1"
+                                        title="Delete"
+                                    >
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
 
-                                <!-- Empty State Message -->
-                                <tr *ngIf="studentService.students().length === 0">
-                                    <td colspan="4" class="px-6 py-10 text-center text-gray-500 text-lg">
-                                        No students found.
-                                    </td>
-                                </tr>
+                        <tr *ngIf="studentService.students().length === 0">
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500 text-sm">
+                                <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                </svg>
+                                No students found
+                            </td>
+                        </tr>
 
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- Pagination -->
-        <div *ngIf="studentService.studentsPage()" class="mt-8 flex items-center justify-between">
+        <div *ngIf="studentService.studentsPage()" class="flex items-center justify-between">
             
-            <!-- Mobile Pagination -->
+            <!-- Mobile -->
             <div class="flex-1 flex justify-between sm:hidden">
                 <button 
                     (click)="onPageChange(currentPage() - 1)" 
                     [disabled]="studentService.studentsPage()?.first"
-                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     Previous
                 </button>
                 <button 
                     (click)="onPageChange(currentPage() + 1)" 
                     [disabled]="studentService.studentsPage()?.last"
-                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
+                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     Next
                 </button>
             </div>
             
+            <!-- Desktop -->
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <!-- Page Info -->
                 <div>
                     <p class="text-sm text-gray-600">
                         Showing
-                        <span class="font-bold text-gray-800">{{ studentService.studentsPage()!.number * studentService.studentsPage()!.size + 1 }}</span>
+                        <span class="font-semibold text-gray-900">{{ studentService.studentsPage()!.number * studentService.studentsPage()!.size + 1 }}</span>
                         to
-                        <span class="font-bold text-gray-800">{{ (studentService.studentsPage()!.number + 1) * studentService.studentsPage()!.size > studentService.studentsPage()!.totalElements ? studentService.studentsPage()!.totalElements : (studentService.studentsPage()!.number + 1) * studentService.studentsPage()!.size }}</span>
+                        <span class="font-semibold text-gray-900">{{ (studentService.studentsPage()!.number + 1) * studentService.studentsPage()!.size > studentService.studentsPage()!.totalElements ? studentService.studentsPage()!.totalElements : (studentService.studentsPage()!.number + 1) * studentService.studentsPage()!.size }}</span>
                         of
-                        <span class="font-bold text-gray-800">{{ studentService.studentsPage()!.totalElements }}</span>
+                        <span class="font-semibold text-gray-900">{{ studentService.studentsPage()!.totalElements }}</span>
                         results
                     </p>
                 </div>
                 
-                <!-- Page Buttons -->
                 <div>
-                    <nav class="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px" aria-label="Pagination">
+                    <nav class="relative z-0 inline-flex rounded-xl border border-gray-200 -space-x-px" aria-label="Pagination">
                         <button 
                             (click)="onPageChange(currentPage() - 1)"
                             [disabled]="studentService.studentsPage()?.first"
-                            class="relative inline-flex items-center px-3 py-2 rounded-l-xl border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
+                            class="relative inline-flex items-center px-2 py-2 rounded-l-xl border-r border-gray-200 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                            <span class="sr-only">Previous</span>
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                         
                         <button 
                             *ngFor="let page of getPageNumbers(studentService.studentsPage())"
                             (click)="onPageChange(page)"
-                            [class.bg-indigo-600]="page === currentPage()"
+                            [class.bg-indigo-500]="page === currentPage()"
                             [class.text-white]="page === currentPage()"
                             [class.bg-white]="page !== currentPage()"
                             [class.text-gray-700]="page !== currentPage()"
-                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-semibold hover:bg-indigo-50 transition duration-150"
+                            class="relative inline-flex items-center px-4 py-2 border-r border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors"
+                            [class.hover:bg-indigo-600]="page === currentPage()"
                         >
                             {{ page + 1 }}
                         </button>
@@ -274,10 +319,11 @@
                         <button 
                             (click)="onPageChange(currentPage() + 1)"
                             [disabled]="studentService.studentsPage()?.last"
-                            class="relative inline-flex items-center px-3 py-2 rounded-r-xl border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
+                            class="relative inline-flex items-center px-2 py-2 rounded-r-xl bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                            <span class="sr-only">Next</span>
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                     </nav>
                 </div>
@@ -287,7 +333,7 @@
     </div>
 </main>
 
-<!-- Student Form Modal (Conditional Display) -->
+<!-- Modal -->
 <app-student-form
   *ngIf="isModalOpen()"
   [studentToEdit]="selectedStudentToEdit()"
