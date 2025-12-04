@@ -10,8 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -37,7 +37,6 @@ class AuthServiceTest {
         admin = new Admin();
         admin.setId(1L);
         admin.setUsername("admin");
-        // Hash BCrypt réel du mot de passe "password"
         admin.setPassword(new BCryptPasswordEncoder().encode("password"));
     }
 
@@ -56,29 +55,29 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_WrongUsername_ThrowsException() {
+    void login_WrongUsername_Throws401() {
         LoginRequest request = new LoginRequest("ghost", "password");
 
         when(adminRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
-        UsernameNotFoundException exception = assertThrows(
-                UsernameNotFoundException.class,
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
                 () -> authService.login(request)
         );
-        assertEquals("Invalid username or password", exception.getMessage());
+        assertEquals("401 UNAUTHORIZED \"Invalid username or password\"", exception.getMessage());
     }
 
     @Test
-    void login_WrongPassword_ThrowsException() {
+    void login_WrongPassword_Throws401() {
         LoginRequest request = new LoginRequest("admin", "wrongpass");
 
         when(adminRepository.findByUsername("admin")).thenReturn(Optional.of(admin));
 
-        UsernameNotFoundException exception = assertThrows(
-                UsernameNotFoundException.class,
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
                 () -> authService.login(request)
         );
-        assertEquals("Invalid username or password", exception.getMessage());
+        assertEquals("401 UNAUTHORIZED \"Invalid username or password\"", exception.getMessage());
     }
 
     @Test
@@ -97,10 +96,13 @@ class AuthServiceTest {
     }
 
     @Test
-    void register_UsernameExists_ThrowsException() {
+    void register_UsernameExists_Throws409() {
         when(adminRepository.existsByUsername("admin")).thenReturn(true);
 
-        assertThrows(RuntimeException.class, () ->
-                authService.register(new RegisterRequest("admin", "anything")));
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> authService.register(new RegisterRequest("admin", "anything"))
+        );
+        assertEquals("409 CONFLICT \"Username already exists\"", exception.getMessage());
     }
 }
