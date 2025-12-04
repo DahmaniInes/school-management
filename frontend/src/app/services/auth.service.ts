@@ -48,4 +48,9 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
+
+
+  register(credentials: { username: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, credentials);
+  }
 }

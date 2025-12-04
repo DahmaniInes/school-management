@@ -4,9 +4,11 @@ import com.school.backend.DTO.*;
 import com.school.backend.Entity.Admin;
 import com.school.backend.Repository.AdminRepository;
 import com.school.backend.Util.JwtUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -28,20 +30,28 @@ public class AuthService implements UserDetailsService {
 
     public AuthResponse login(LoginRequest request) {
         Admin admin = adminRepository.findByUsername(request.username())
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 
         if (!new BCryptPasswordEncoder().matches(request.password(), admin.getPassword())) {
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
 
         String token = jwtUtil.generateToken(admin);
         return new AuthResponse(token);
     }
 
+
+
+
+
+
+
+
     public void register(RegisterRequest request) {
         if (adminRepository.existsByUsername(request.username())) {
-            throw new RuntimeException("Username already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
         }
+
         Admin admin = new Admin();
         admin.setUsername(request.username());
         admin.setPassword(new BCryptPasswordEncoder().encode(request.password()));
