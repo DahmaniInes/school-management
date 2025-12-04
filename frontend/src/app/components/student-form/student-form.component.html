@@ -1,72 +1,73 @@
-<!-- Modale d'arrière-plan -->
+<!-- Backdrop Modal -->
 <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity z-40" (click)="onClose()"></div>
 
-<!-- Conteneur de la Modale -->
+<!-- Modal Container -->
 <div class="fixed inset-0 z-50 overflow-y-auto">
   <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
     
-    <!-- Panneau de la Modale -->
-    <div class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+    <!-- Modal Panel -->
+    <div class="relative bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         
-        <!-- Titre -->
-        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">
-            {{ isEditMode ? 'Modifier l\'Étudiant' : 'Ajouter un Nouvel Étudiant' }}
+        <!-- Title -->
+        <div class="text-center sm:text-left">
+          <h3 class="text-xl leading-6 font-bold text-gray-900 border-b pb-2 mb-4">
+            {{ isEditMode ? 'Edit Student' : 'Add New Student' }}
           </h3>
         </div>
         
-        <!-- Contenu du Formulaire -->
+        <!-- Form Content -->
         <form (ngSubmit)="onSubmit()" class="mt-6 space-y-6">
           
-          <!-- Champ Nom d'utilisateur -->
+          <!-- Username Field -->
           <div>
-            <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
             <input 
               id="username" 
               type="text" 
               required 
               [(ngModel)]="username" 
               name="username"
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="e.g., john.doe"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
           </div>
 
-          <!-- Champ Niveau -->
+          <!-- Level Field -->
           <div>
-            <label for="level" class="block text-sm font-medium text-gray-700">Niveau</label>
+            <label for="level" class="block text-sm font-medium text-gray-700">Level</label>
             <select 
               id="level" 
               required 
               [(ngModel)]="selectedLevel" 
               name="level"
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm appearance-none"
             >
               <option *ngFor="let level of studentService.levels" [ngValue]="level">{{ level }}</option>
             </select>
           </div>
 
-          <!-- Message d'Erreur -->
+          <!-- Error Message -->
           <div *ngIf="error" class="text-red-600 text-sm font-medium p-3 bg-red-50 border border-red-300 rounded-lg">
             {{ error }}
           </div>
           
-          <!-- Boutons d'Action -->
-          <div class="flex justify-end pt-4 space-x-3">
+          <!-- Action Buttons -->
+          <div class="flex justify-end pt-4 space-x-3 border-t mt-6">
             <button 
               type="button" 
               (click)="onClose()" 
               [disabled]="isLoading"
-              class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition duration-150 sm:text-sm"
+              class="inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition duration-150 sm:text-sm"
             >
-              Annuler
+              Cancel
             </button>
             <button 
               type="submit" 
               [disabled]="isLoading"
-              class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white transition duration-150 sm:text-sm"
+              class="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white transition duration-150 sm:text-sm"
               [ngClass]="{
-                'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500': !isLoading,
+                'bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500': !isLoading,
                 'bg-indigo-400 cursor-not-allowed': isLoading
               }"
             >
@@ -74,7 +75,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              {{ isEditMode ? 'Enregistrer' : 'Ajouter' }}
+              {{ isEditMode ? 'Save Changes' : 'Add Student' }}
             </button>
           </div>
 
