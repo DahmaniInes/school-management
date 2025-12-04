@@ -1,189 +1,195 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { 
-  StudentService, 
-  StudentResponse, 
-  Level, 
-  PageResponse 
+  StudentService, 
+  StudentResponse, 
+  Level, 
+  PageResponse 
 } from '../../services/student.service';
 import { StudentFormComponent } from '../student-form/student-form.component';
-import { AuthService } from '../../services/auth.service'; // Importation du AuthService
+import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-students',
-  standalone: true,
-  imports: [CommonModule, FormsModule, StudentFormComponent],
-  templateUrl: './students.component.html',
-  styleUrl: './students.component.css'
+  selector: 'app-students',
+  standalone: true,
+  imports: [CommonModule, FormsModule, StudentFormComponent],
+  templateUrl: './students.component.html',
+  styleUrl: './students.component.css'
 })
 export class StudentsComponent implements OnInit {
 
-  studentService = inject(StudentService);
-  // Injection du AuthService pour pouvoir l'utiliser dans le template (si nécessaire)
-  // ou dans la logique du composant.
-  authService = inject(AuthService); 
-  
-  // --- État de la page ---
-  currentPage = signal(0);
-  pageSize = signal(10);
-  searchQuery = signal('');
-  selectedLevelFilter = signal<Level | null>(null);
-  
-  // Modale
-  isModalOpen = signal(false);
-  selectedStudentToEdit = signal<StudentResponse | null>(null);
+  studentService = inject(StudentService);
+  authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  // Import/Export
-  selectedFile: File | null = null;
-  fileImportMessage = signal<string | null>(null);
-  fileImportError = signal<string | null>(null);
+  // État de la page
+  currentPage = signal(0);
+  pageSize = signal(5);
+  searchQuery = signal('');
+  selectedLevelFilter = signal<Level | null>(null);
 
-  ngOnInit(): void {
-    // Chargement initial des données
-    this.loadStudents();
-  }
+  // Modale
+  isModalOpen = signal(false);
+  selectedStudentToEdit = signal<StudentResponse | null>(null);
 
-  // --- Logique de Chargement et de Pagination ---
+  // Import/Export
+  selectedFile: File | null = null;
+  fileImportMessage = signal<string | null>(null);
+  fileImportError = signal<string | null>(null);
 
-  loadStudents(): void {
-    const page = this.currentPage();
-    const size = this.pageSize();
-    const search = this.searchQuery();
-    const level = this.selectedLevelFilter();
+  constructor() {
+    // Met à jour l'URL quand l'état change (page, recherche, filtre)
+    effect(() => {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {
+          page: this.currentPage() || 0,
+          size: this.pageSize(),
+          search: this.searchQuery() || null,
+          level: this.selectedLevelFilter() || null
+        },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    });
+  }
 
-    this.studentService.getAll(page, size, search, level).subscribe({
-      error: (err) => {
-        console.error('Failed to load students:', err);
-        // Gérer l'erreur (ex: afficher un message)
-      }
-    });
-  }
+  ngOnInit(): void {
+    // Lit les query params au chargement (F5, lien direct, etc.)
+    this.route.queryParams.subscribe(params => {
+      this.currentPage.set(parseInt(params['page'] ?? '0', 10));
+      this.pageSize.set(parseInt(params['size'] ?? '5', 10));
+      this.searchQuery.set(params['search'] ?? '');
+      this.selectedLevelFilter.set((params['level'] as Level) ?? null);
+    });
 
-  onPageChange(newPage: number): void {
-    this.currentPage.set(newPage);
-    this.loadStudents();
-  }
+    // Charge les données une fois l'état restauré
+    this.loadStudents();
+  }
 
-  // Crée un tableau de nombres pour les boutons de pagination
-  getPageNumbers(pageData: PageResponse<StudentResponse> | null): number[] {
-    if (!pageData) return [];
-    return Array.from({ length: pageData.totalPages }, (_, i) => i);
-  }
+  loadStudents(): void {
+    this.studentService.getAll(
+      this.currentPage(),
+      this.pageSize(),
+      this.searchQuery() || null,
+      this.selectedLevelFilter()
+    ).subscribe({
+      next: (data) => {
+        // Important : on met à jour le signal pour que le template réagisse
+        this.studentService.studentsPage.set(data);
+      },
+      error: (err) => console.error('Erreur chargement étudiants:', err)
+    });
+  }
 
-  // --- Gestion du Formulaire (Modale) ---
+  onPageChange(newPage: number): void {
+    if (newPage >= 0) {
+      this.currentPage.set(newPage);
+      this.loadStudents();
+    }
+  }
 
-  openCreateModal(): void {
-    this.selectedStudentToEdit.set(null);
-    this.isModalOpen.set(true);
-  }
+  getPageNumbers(pageData: PageResponse<StudentResponse> | null): number[] {
+    if (!pageData) return [];
+    return Array.from({ length: pageData.totalPages }, (_, i) => i);
+  }
 
-  openEditModal(student: StudentResponse): void {
-    this.selectedStudentToEdit.set(student);
-    this.isModalOpen.set(true);
-  }
+  // === FORMULAIRE ===
+  openCreateModal(): void {
+    this.selectedStudentToEdit.set(null);
+    this.isModalOpen.set(true);
+  }
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
-    this.selectedStudentToEdit.set(null);
-  }
+  openEditModal(student: StudentResponse): void {
+    this.selectedStudentToEdit.set(student);
+    this.isModalOpen.set(true);
+  }
 
-  onFormSubmitted(): void {
-    // Recharger la liste des étudiants après création/modification
-    this.loadStudents();
-  }
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.selectedStudentToEdit.set(null);
+  }
 
-  // --- Suppression ---
+  onFormSubmitted(): void {
+    this.closeModal();
+    this.currentPage.set(0); // retour page 1 après ajout/modif
+    this.loadStudents();
+  }
 
-  // NOTE: Remplacer alert/confirm par un modal UI personnalisé pour respecter les directives
-  deleteStudent(id: number, username: string): void {
-    // Remplacer le confirm() par un modal dans une application réelle
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'étudiant "${username}" ?`)) {
-      this.studentService.delete(id).subscribe({
-        next: () => {
-          // Recharger les données, potentiellement en restant sur la même page
-          this.loadStudents();
-        },
-        error: (err) => {
-          console.error(err.message || "Erreur lors de la suppression.");
-          // alert(err.message || "Erreur lors de la suppression."); // Remplacer par un message UI
-        }
-      });
-    }
-  }
+  // === SUPPRESSION (CORRIGÉE) ===
+  deleteStudent(id: number, username: string): void {
+    if (confirm(`Supprimer l'étudiant "${username}" ?`)) {
+      this.studentService.delete(id).subscribe({
+        next: () => {
+          // Si on supprime le dernier étudiant de la page → on recule d'une page
+          const currentContent = this.studentService.students();
+          if (currentContent.length === 1 && this.currentPage() > 0) {
+            this.currentPage.set(this.currentPage() - 1);
+          }
+          this.loadStudents();
+        },
+        error: (err) => {
+          console.error('Erreur suppression:', err);
+          alert('Impossible de supprimer cet étudiant.');
+        }
+      });
+    }
+  }
 
-  // --- Filtres et Recherche ---
+  // === FILTRES ===
+  applyFilters(): void {
+    this.currentPage.set(0);
+    this.loadStudents();
+  }
 
-  applyFilters(): void {
-    this.currentPage.set(0); // Toujours revenir à la première page lors de l'application des filtres
-    this.loadStudents();
-  }
-  
-  // Réinitialiser la recherche
-  clearSearch(): void {
-    this.searchQuery.set('');
-    this.applyFilters();
-  }
-  
-  // Réinitialiser le filtre de niveau
-  clearLevelFilter(): void {
-    this.selectedLevelFilter.set(null);
-    this.applyFilters();
-  }
+  clearSearch(): void {
+    this.searchQuery.set('');
+    this.applyFilters();
+  }
 
-  // --- Import/Export ---
+  clearLevelFilter(): void {
+    this.selectedLevelFilter.set(null);
+    this.applyFilters();
+  }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-    } else {
-      this.selectedFile = null;
-    }
-    this.fileImportMessage.set(null);
-    this.fileImportError.set(null);
-  }
+  // === IMPORT / EXPORT ===
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] ?? null;
+    this.fileImportMessage.set(null);
+    this.fileImportError.set(null);
+  }
 
-  importCsv(): void {
-    if (!this.selectedFile) {
-      this.fileImportError.set("Veuillez sélectionner un fichier CSV.");
-      return;
-    }
+  importCsv(): void {
+    if (!this.selectedFile) {
+      this.fileImportError.set('Veuillez sélectionner un fichier.');
+      return;
+    }
+    this.fileImportMessage.set('Import en cours...');
+    this.studentService.importCsv(this.selectedFile).subscribe({
+      next: () => {
+        this.fileImportMessage.set('Import réussi !');
+        this.selectedFile = null;
+        this.loadStudents();
+        setTimeout(() => this.fileImportMessage.set(null), 3000);
+      },
+      error: (err) => this.fileImportError.set('Échec import: ' + err.message)
+    });
+  }
 
-    this.fileImportMessage.set("Importation en cours...");
-    this.fileImportError.set(null);
-
-    this.studentService.importCsv(this.selectedFile).subscribe({
-      next: () => {
-        this.fileImportMessage.set("Importation réussie !");
-        this.selectedFile = null;
-        this.loadStudents(); // Rafraîchir la liste après l'import
-        setTimeout(() => this.fileImportMessage.set(null), 3000);
-      },
-      error: (err) => {
-        this.fileImportError.set(`Échec de l'importation: ${err.message}`);
-        this.fileImportMessage.set(null);
-      }
-    });
-  }
-
-  exportCsv(): void {
-    this.studentService.exportCsv().subscribe({
-      next: (blob) => {
-        // Crée un lien temporaire pour télécharger le fichier
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'students.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      },
-      error: (err) => {
-        console.error(err.message || "Échec de l'exportation CSV.");
-        // alert(err.message || "Échec de l'exportation CSV."); // Remplacer par un message UI
-      }
-    });
-  }
+  exportCsv(): void {
+    this.studentService.exportCsv().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'students.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    });
+  }
 }

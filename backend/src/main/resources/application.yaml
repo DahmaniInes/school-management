@@ -20,6 +20,7 @@ spring:
     init:
       mode: always
 
+
 jwt:
   secret: mySuperSecretJwtKeyThatIsVeryLongAndSecure12345678901234567890
   expiration-ms: 86400000

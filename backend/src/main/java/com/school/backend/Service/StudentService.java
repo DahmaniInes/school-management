@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -21,23 +22,64 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
+
+
+
     public Page<StudentResponse> getAllStudents(int page, int size, String search, Level level) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
-        if (search != null && !search.isBlank() && level != null) {
-            return studentRepository.findByUsernameContainingIgnoreCaseAndLevel(search, level, pageable)
-                    .map(this::toResponse);
-        }
+        // === RECHERCHE PAR ID (priorité absolue) ===
         if (search != null && !search.isBlank()) {
-            return studentRepository.findByUsernameContainingIgnoreCase(search, pageable)
-                    .map(this::toResponse);
+            String trimmed = search.trim();
+            if (trimmed.matches("\\d+")) {
+                try {
+                    Long id = Long.parseLong(trimmed);
+                    Optional<Student> studentOpt = studentRepository.findById(id);
+
+                    if (studentOpt.isEmpty()) {
+                        return new PageImpl<>(List.of(), pageable, 0);
+                    }
+
+                    Student student = studentOpt.get();
+
+                    // Si un filtre level est actif → on vérifie la compatibilité
+                    if (level != null && student.getLevel() != level) {
+                        return new PageImpl<>(List.of(), pageable, 0);
+                    }
+
+                    StudentResponse response = toResponse(student);
+                    List<StudentResponse> content = List.of(response);
+
+                    return new PageImpl<>(content, pageable, 1);
+
+                } catch (NumberFormatException e) {
+                    // Si ce n'est pas un nombre valide → on passe à la recherche par nom
+                }
+            }
         }
-        if (level != null) {
-            return studentRepository.findByLevel(level, pageable)
-                    .map(this::toResponse);
+
+        // === RECHERCHE PAR NOM + FILTRE LEVEL (comportement normal) ===
+        Page<Student> studentPage;
+
+        if (search != null && !search.isBlank() && level != null) {
+            studentPage = studentRepository.findByUsernameContainingIgnoreCaseAndLevel(search.trim(), level, pageable);
+        } else if (search != null && !search.isBlank()) {
+            studentPage = studentRepository.findByUsernameContainingIgnoreCase(search.trim(), pageable);
+        } else if (level != null) {
+            studentPage = studentRepository.findByLevel(level, pageable);
+        } else {
+            studentPage = studentRepository.findAll(pageable);
         }
-        return studentRepository.findAll(pageable).map(this::toResponse);
+
+        List<StudentResponse> content = studentPage.getContent().stream()
+                .map(this::toResponse)
+                .toList();
+
+        return new PageImpl<>(content, pageable, studentPage.getTotalElements());
     }
+
+
+
 
     public StudentResponse getStudentById(Long id) {
         return studentRepository.findById(id)

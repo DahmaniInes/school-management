@@ -7,36 +7,30 @@
         <svg class="mx-auto h-12 w-auto text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
         </svg>
-        <h2 class="mt-4 text-3xl font-extrabold text-white">
-          Admin Login
-        </h2>
-        <p class="mt-2 text-sm text-gray-400">
-          Student Management System
-        </p>
+        <h2 class="mt-4 text-3xl font-extrabold text-white">Admin Login</h2>
+        <p class="mt-2 text-sm text-gray-400">Student Management System</p>
       </div>
       
-      <!-- Error Message -->
-      <div *ngIf="errorMessage" class="p-3 bg-red-800 border border-red-600 text-red-100 rounded-lg text-sm transition duration-300" role="alert">
-        {{ errorMessage }}
+      <!-- Error / Rate Limit Message -->
+      <div *ngIf="errorMessage" 
+           class="p-4 bg-red-900/60 border border-red-700 text-red-100 rounded-lg text-sm flex items-center justify-between animate-pulse">
+        <span>{{ errorMessage }}</span>
+        <span *ngIf="isRateLimited" class="ml-3 px-3 py-1 bg-red-800 rounded-full text-xs font-bold">
+          {{ countdown }}s
+        </span>
       </div>
       
       <!-- Login Form -->
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
         
-        <!-- Username Field -->
+        <!-- Username -->
         <div>
           <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
           <div class="mt-1">
-            <input
-              id="username"
-              name="username"
-              type="text"
-              formControlName="username"
-              required
-              placeholder="Enter your username"
-              class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-xl shadow-inner placeholder-gray-500 bg-gray-700 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150"
-              [ngClass]="{'border-red-500': f['username'].invalid && f['username'].touched}"
-            >
+            <input id="username" formControlName="username" type="text" required
+                   placeholder="Enter your username"
+                   class="block w-full px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                   [ngClass]="{'border-red-500': f['username'].invalid && f['username'].touched}">
             <div *ngIf="f['username'].invalid && f['username'].touched" class="text-red-400 text-xs mt-1">
               <div *ngIf="f['username'].errors?.['required']">Username is required.</div>
               <div *ngIf="f['username'].errors?.['minlength']">Minimum 3 characters.</div>
@@ -44,20 +38,14 @@
           </div>
         </div>
         
-        <!-- Password Field -->
+        <!-- Password -->
         <div>
           <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
           <div class="mt-1">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              formControlName="password"
-              required
-              placeholder="Enter your password"
-              class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-xl shadow-inner placeholder-gray-500 bg-gray-700 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150"
-              [ngClass]="{'border-red-500': f['password'].invalid && f['password'].touched}"
-            >
+            <input id="password" formControlName="password" type="password" required
+                   placeholder="Enter your password"
+                   class="block w-full px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                   [ngClass]="{'border-red-500': f['password'].invalid && f['password'].touched}">
             <div *ngIf="f['password'].invalid && f['password'].touched" class="text-red-400 text-xs mt-1">
               <div *ngIf="f['password'].errors?.['required']">Password is required.</div>
               <div *ngIf="f['password'].errors?.['minlength']">Minimum 6 characters.</div>
@@ -67,18 +55,22 @@
         
         <!-- Submit Button -->
         <div>
-          <button
-            type="submit"
-            [disabled]="loginForm.invalid || loading"
-            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.01]"
-          >
-            <span *ngIf="!loading">Sign In</span>
+          <button type="submit"
+                  [disabled]="loginForm.invalid || loading || isRateLimited"
+                  class="w-full flex justify-center py-3 px-4 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-[1.02]
+                         disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  [class.bg-indigo-600]="!isRateLimited"
+                  [class.hover:bg-indigo-700]="!isRateLimited"
+                  [class.bg-red-600]="isRateLimited">
+            
+            <span *ngIf="!loading && !isRateLimited">Sign In</span>
+            <span *ngIf="!loading && isRateLimited">Locked ({{ countdown }}s)</span>
             <span *ngIf="loading" class="flex items-center">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Signing In...
+              Signing in...
             </span>
           </button>
         </div>

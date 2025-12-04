@@ -17,37 +17,54 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class RateLimitingFilter extends OncePerRequestFilter implements Ordered {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    private Bucket createBucket() {
-        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1)));
+    private Bucket createNewBucket() {
+        // 5 tokens au départ, +5 toutes les 60 secondes → parfait
+        Bandwidth limit = Bandwidth.classic(5, Refill.intervally(5, Duration.ofSeconds(60)));
         return Bucket.builder().addLimit(limit).build();
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getRequestURI().equals("/api/auth/login")) {
-            String ip = request.getRemoteAddr();
-            Bucket bucket = buckets.computeIfAbsent(ip, k -> createBucket());
+        // CORS (obligatoire)
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "*");
 
-            if (bucket.tryConsume(1)) {
-                filterChain.doFilter(request, response);
-            } else {
-                response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-                response.getWriter().write("Too many login attempts. Try again later.");
-                return;
-            }
-        } else {
+        // On ne bloque UNIQUEMENT le login
+        if (!"/api/auth/login".equals(request.getRequestURI()) || !"POST".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        String ip = request.getRemoteAddr();
+        Bucket bucket = buckets.computeIfAbsent(ip, k -> createNewBucket());
+
+        if (bucket.tryConsume(1)) {
+            // 5 premières tentatives → OK
+            filterChain.doFilter(request, response);
+        } else {
+            // 6ème et + → bloqué 60s
+            response.setStatus(429);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"error\":\"Too many attempts\"," +
+                            "\"message\":\"Too many login attempts. Please try again in 60 seconds.\"," +
+                            "\"retryAfter\":60}"
+            );
         }
     }
 
     @Override
     public int getOrder() {
-        return 0; // Le premier filtre
+        return Ordered.HIGHEST_PRECEDENCE; // Doit être AVANT tout le reste
     }
 }
