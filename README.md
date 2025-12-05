@@ -3,9 +3,6 @@
 **Full-Stack Application** | Spring Boot 3.5.8 + Angular 18 + MySQL + JWT + Docker  
 **TailwindCSS v4** – Modern, responsive & beautiful UI
 
-**Submitted by:** Ines Dahmani  
-**GitHub:** https://github.com/DahmaniInes/school-management  
-**Portfolio:** https://inesdahmani.netlify.app
 
 ---
 
@@ -48,8 +45,11 @@
 ## How to Run (30 seconds)
 
 git clone https://github.com/DahmaniInes/school-management.git
+
 cd school-management
+
 docker-compose up --build
+
 Access:
 
 Frontend: http://localhost:4200
@@ -95,6 +95,5 @@ Ready for discussion & improvements anytime.
 
 Thank you Relead for this amazing challenge!
 
-PFE-2025-TECH-SUBMISSION
-
+PFE-2025-TECH-SWE-SUBMISSION
 
