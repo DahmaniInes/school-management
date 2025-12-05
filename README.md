@@ -9,13 +9,13 @@
 
 ---
 
-## Features Implemented (100 % conforme à l’énoncé + bonus)
+## Features Implemented
 
 | Feature                                   | Status       | Details |
 |------------------------------------------|--------------|-------|
 | JWT Authentication (Login + Register)     | Done         | Token + BCrypt + Secure |
 | Protected Student APIs                    | Done         | Only authenticated admins |
-| Full CRUD Students                        | Done         | Create /students |
+| Full CRUD Students                        | Done         | Create / Read / Update / Delete |
 | Pagination (5 per page)                   | Done         | Clean page buttons |
 | Search by username or ID                  | Done         | One field → smart detection |
 | Filter by level (L1–L3, M1–M2)            | Done         | Works with search + ID |
@@ -34,7 +34,7 @@
 
 | Layer         | Technology                                      |
 |---------------|--------------------------------------------------|
-| Backend       | Spring Boot 3.5.8 (Java 21)                     |
+| Backend       | Spring Boot 3.5.8 (Java 22)                     |
 | Frontend      | Angular 18 + Standalone + Signals + TailwindCSS v4 |
 | Database      | MySQL 8                                         |
 | Auth          | JWT + BCrypt + Spring Security                 |
@@ -47,37 +47,54 @@
 
 ## How to Run (30 seconds)
 
-```bash
 git clone https://github.com/DahmaniInes/school-management.git
 cd school-management
 docker-compose up --build
-→ Frontend: http://localhost:4200
-→ Backend + Swagger: http://localhost:8080/swagger-ui.html
+Access:
+
+Frontend: http://localhost:4200
+
+Backend + Swagger: http://localhost:8080/swagger-ui.html
+
 First admin created automatically:
 
 Username: admin
+
 Password: admin123
 
 
-Screenshots (30+ included)
-See the /screenshots folder:
-
+## Screenshots (30+ included)
 Login + Register (Tailwind v4 design)
+
 Rate limiting countdown (429 → 60s block)
+
 Students dashboard + search + filter + pagination
+
 Create / Edit modal
+
 CSV Import/Export
+
 Swagger with all status codes
+
 Docker Compose up
+
 Unit tests 100 % green
 
 
-Author
+## Author
 Ines Dahmani
 Full-Stack Developer | Clean Code Enthusiast | UI/UX Lover
+
 Portfolio: https://inesdahmani.netlify.app
+
 GitHub: https://github.com/DahmaniInes
+
 LinkedIn: https://linkedin.com/in/ines-dahmani
+
 Ready for discussion & improvements anytime.
+
 Thank you Relead for this amazing challenge!
+
 PFE-2025-TECH-SUBMISSION
+
+
